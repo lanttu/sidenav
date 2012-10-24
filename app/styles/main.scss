@@ -1,0 +1,259 @@
+/* Will be compiled down to a single stylesheet with your sass files */
+
+@import "compass/css3/box-sizing";
+@import "compass/css3/transition";
+@import "compass/css3/transform";
+@import "compass/css3/images";
+@import "compass/css3/opacity";
+@import "compass/utilities/general/clearfix";
+
+
+$sidenavWidth: 250px;
+$transitionTime: 0.2s;
+$contentBackground: #fff;
+$overlayOpacity: 0.5;
+
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.sidenav {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+
+    left: 0;
+    // top: 0;
+    width: 100%;
+}
+
+.sidenav-menu {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 5;
+    @include box-sizing(border-box);
+
+    position: absolute;
+    height: 100%;
+    width: $sidenavWidth;
+}
+
+.sidenav-content {
+    position: absolute;
+    overflow-x: hidden;
+    z-index: 6;
+    @include box-sizing(border-box);
+
+    height: 100%;
+    left: 0;
+    right: 0;
+
+    background-color: $contentBackground;
+}
+
+.sidenav-overlay {
+    display: none;
+    z-index: 7;
+
+    background-color: gray;
+    opacity: 0;
+
+    overflow-x: hidden;
+    position: absolute;
+    height: 100%;
+    left: 0;
+    right: 0;
+
+    // Removes blue highlight when clicking overlay
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+// Display overlay when menu is visible
+.sidenav-opening, .sidenav-closing, .sidenav-open {
+    .sidenav-overlay {
+        display: block;
+    }
+}
+.sidenav-closed {
+    .sidenav-overlay {
+        display: none;
+    }
+}
+
+.sidenav-opening {
+    .sidenav-content, .sidenav-overlay {
+        @include transform(translate3D($sidenavWidth, 0, 0));
+    }
+}
+
+.sidenav-closing {
+    .sidenav-content, .sidenav-overlay {
+        left: $sidenavWidth;
+        right: -$sidenavWidth;
+        @include transform(translate3D(-$sidenavWidth, 0, 0));
+    }
+}
+
+.sidenav-open {
+    .sidenav-content, .sidenav-overlay {
+        // Switch from transform to position when menu is fully opened so that
+        // it is visible even if browser doesn't support transforms
+        left: $sidenavWidth;
+        right: -$sidenavWidth;
+    }
+}
+
+.sidenav-opening, .sidenav-closing {
+    .sidenav-content, .sidenav-overlay {
+        @include transition-property(all);
+        @include transition-duration($transitionTime);
+        @include transition-timing-function(ease-in-out);
+    }
+}
+
+
+
+//
+// Pretty
+// -------------------------------------------
+$menuBg: #808080;
+$menuFg: #D3D3D3;
+$sepColor: #A0A0A0;
+$menuPadding: 9px;
+
+.sidenav-menu {
+    background-color: $menuBg;
+
+    // Serious performance hit on Android Chrome. Looks like this is webkit issue
+    // box-shadow: inset  -2px 2px 5px 0 darken($menuBg, 8%);
+
+    @include background-image(
+        linear-gradient(left,
+            $menuBg 97%,
+            darken($menuBg, 3%) 100%
+        )
+    );
+
+    color: $menuFg;
+    padding: $menuPadding;
+}
+
+.sidenav-menu {
+    .nav-header {
+        border-bottom: 1px solid $sepColor;
+        color: $menuFg;
+        text-shadow: none;
+    }
+
+    li {
+        a {
+            color: $menuFg;
+
+            &:hover {
+                color: lighten($menuFg, 3%);
+                background: transparent;
+                text-shadow: 0 0 5px darken($menuBg, 20%);
+            }
+            padding: 12px 0 12px 5px;
+        }
+
+        font-size: 13px;
+        letter-spacing: 1px;
+
+        [class^="icon-"] {
+            font-size: 1.3em;
+            padding-right: 5px;
+        }
+
+
+        @include background-image(
+            linear-gradient($menuBg,
+                darken($menuBg, 1%) 0%,
+                $menuBg 5%,
+                $menuBg 95%,
+                darken($menuBg, 1%) 100%
+            )
+        );
+
+
+        // Tile buttons
+        &.tiles {
+            background-image: none; // Disable gradient
+
+            padding: 0 0 $menuPadding;
+            @include clearfix();
+
+            a {
+                display: inline-block;
+                width: ($sidenavWidth - $menuPadding * 3) / 2;
+                height: 75px;
+                float: left;
+                padding: 0;
+                margin-top: $menuPadding;
+
+                background-color: lighten($menuBg, 8%);
+                text-align: center;
+
+                @include background-image(
+                    radial-gradient(
+                        50% 50%,
+                        lighten($menuBg, 12%) 12px,
+                        lighten($menuBg, 8%) 60px
+                    )
+                );
+
+                &:nth-child(odd) {
+                    margin-right: $menuPadding;
+                }
+            }
+
+            [class^="icon-"] {
+                display: block;
+                margin: 0 auto;
+                font-size: 1.6em;
+                padding: $menuPadding*2 0 $menuPadding;
+            }
+        }
+
+        // Input field
+        input {
+            @include box-sizing(border-box);
+            width: 100%;
+            height: 36px;
+            padding: $menuPadding;
+            margin: $menuPadding 0;
+
+            border-color: darken($menuBg, 3%);
+            background-color: lighten($menuBg, 10%);
+
+            color: $menuFg;
+
+
+            $placeholderColor: darken($menuFg, 10%);
+
+            &::-webkit-input-placeholder {
+                font-style: italic;
+                font-weight: thin;
+                color: $placeholderColor;
+            }
+
+            &:-moz-placholder {
+                color: $placeholderColor;
+            }
+
+            &:-ms-input-placeholder {
+                color: $placeholderColor;
+            }
+
+        }
+    }
+}
