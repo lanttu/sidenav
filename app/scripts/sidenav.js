@@ -3,7 +3,11 @@
 
 angular.module('sidenav', [])
 
-.directive('sidenav', ['$timeout', function ($timeout) {
+.directive('sidenav',
+    ['$timeout', '$window',
+    function ($timeout, $window) {
+
+    var Modernizr = $window.Modernizr;
 
     var clsPrefix = 'sidenav-';
     var transTime = 200; // ms
@@ -18,6 +22,12 @@ angular.module('sidenav', [])
             var isOpen    = null;
 
             container.addClass('sidenav');
+
+            if (Modernizr.csstransforms && Modernizr.csstransitions) {
+                container.addClass(clsPrefix + 'transform');
+            } else {
+                container.addClass(clsPrefix + 'position');
+            }
 
             menu.addClass(clsPrefix + 'menu');
 
@@ -70,7 +80,7 @@ angular.module('sidenav', [])
             }
         }
     };
-}]);
+}])
 
 var sidenavApp = angular.module('sidenavApp', ['sidenav']);
 

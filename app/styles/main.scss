@@ -1,5 +1,3 @@
-/* Will be compiled down to a single stylesheet with your sass files */
-
 @import "compass/css3/box-sizing";
 @import "compass/css3/transition";
 @import "compass/css3/transform";
@@ -89,37 +87,40 @@ body {
     }
 }
 
-.sidenav-opening {
-    .sidenav-content, .sidenav-overlay {
-        @include transform(translate3D($sidenavWidth, 0, 0));
+//
+// Browser supports transforms
+// ------------------
+
+.sidenav-transform {
+    &.sidenav-opening, &.sidenav-closing {
+        .sidenav-content, .sidenav-overlay {
+            @include transition-property(all);
+            @include transition-duration($transitionTime);
+            @include transition-timing-function(ease-in-out);
+        }
+    }
+
+    &.sidenav-opening, &.sidenav-open {
+        .sidenav-content, .sidenav-overlay {
+            @include transform(translate3D($sidenavWidth, 0, 0));
+        }
     }
 }
 
-.sidenav-closing {
-    .sidenav-content, .sidenav-overlay {
-        left: $sidenavWidth;
-        right: -$sidenavWidth;
-        @include transform(translate3D(-$sidenavWidth, 0, 0));
+
+//
+// Doesn't support transforms
+// --------------------------
+
+.sidenav-position {
+    &.sidenav-opening, &.sidenav-closing, &.sidenav-open {
+        .sidenav-content, .sidenav-overlay, .navbar-fixed-top {
+            // HOX fixed bootstrap navbar
+            left: $sidenavWidth;
+            right: -$sidenavWidth;
+        }
     }
 }
-
-.sidenav-open {
-    .sidenav-content, .sidenav-overlay {
-        // Switch from transform to position when menu is fully opened so that
-        // it is visible even if browser doesn't support transforms
-        left: $sidenavWidth;
-        right: -$sidenavWidth;
-    }
-}
-
-.sidenav-opening, .sidenav-closing {
-    .sidenav-content, .sidenav-overlay {
-        @include transition-property(all);
-        @include transition-duration($transitionTime);
-        @include transition-timing-function(ease-in-out);
-    }
-}
-
 
 
 //
